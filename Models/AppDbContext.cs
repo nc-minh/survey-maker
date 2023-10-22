@@ -28,5 +28,7 @@ namespace SurveyMaker.Models
             // }
         }
 
+        public DbSet<Contact> Contacts { get; set; }
+
     }
 }
