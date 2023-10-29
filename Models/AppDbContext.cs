@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SurveyMaker.Models
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
@@ -18,14 +18,14 @@ namespace SurveyMaker.Models
 
             base.OnModelCreating(builder);
 
-            // foreach (var entityType in builder.Model.GetEntityTypes())
-            // {
-            //     var tableName = entityType.GetTableName();
-            //     if (tableName.StartsWith("AspNet"))
-            //     {
-            //         entityType.SetTableName(tableName.Substring(6));
-            //     }
-            // }
+            foreach (var entityType in builder.Model.GetEntityTypes())
+            {
+                var tableName = entityType.GetTableName();
+                if (tableName.StartsWith("AspNet"))
+                {
+                    entityType.SetTableName(tableName.Substring(6));
+                }
+            }
         }
 
         public DbSet<Contact> Contacts { get; set; }

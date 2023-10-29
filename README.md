@@ -20,3 +20,10 @@ dotnet aspnet-codegenerator controller -name Contact -namespace SurveyMaker.Cont
 # Migration
 
 dotnet ef migrations add Init
+dotnet ef migrations add AddIdentity
+dotnet ef database update
+
+# Intergrate Identity
+
+dotnet add package Microsoft.AspNetCore.Identity
+dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore
