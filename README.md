@@ -17,6 +17,8 @@ dotnet add package Microsoft.EntityFrameworkCore.Tools
 
 dotnet aspnet-codegenerator controller -name Contact -namespace SurveyMaker.Controllers -m SurveyMaker.Models.Contact -udl -dc SurveyMaker.Models.ApplicationDbContext -outDir Controllers/
 
+dotnet tool install -g Microsoft.Web.LibraryManager.Cli
+
 # Migration
 
 dotnet ef migrations add Init
@@ -27,3 +29,4 @@ dotnet ef database update
 
 dotnet add package Microsoft.AspNetCore.Identity
 dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore
+dotnet add package Microsoft.AspNetCore.Authentication

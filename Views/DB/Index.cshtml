@@ -13,6 +13,8 @@
     dbContext.Database.GetPendingMigrations();
 }
 
+<partial name="_AlertMessage" />
+
 <h1>Thông tin</h1>
 
 <p>- Database: @dbname</p>
@@ -48,4 +50,6 @@
     {
         <p>@row["TABLE_NAME"]</p>
     }
+
+    <a class="btn btn-danger" asp-action="SeedData">Seed Data</a>
 }

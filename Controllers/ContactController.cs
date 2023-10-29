@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SurveyMaker.Data;
 using SurveyMaker.Models;
 
 namespace SurveyMaker.Controllers
 {
+    [Authorize(Roles = RoleName.Administrator)]
     public class ContactController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,6 +23,7 @@ namespace SurveyMaker.Controllers
 
         // GET: Contact
         [HttpGet("/admin/contacts")]
+
         public async Task<IActionResult> Index()
         {
             return _context.Contacts != null ?

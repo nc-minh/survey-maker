@@ -1,5 +1,7 @@
+using App.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SurveyMaker.Data;
 using SurveyMaker.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +23,31 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+// register email service
+builder.Services.AddOptions();
+var mailSettings = builder.Configuration.GetSection("MailSettings");
+builder.Services.Configure<MailSettings>(mailSettings);
+builder.Services.AddSingleton<IEmailSender, SendMailService>();
+
+builder.Services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/login/";
+    options.LogoutPath = "/logout/";
+    options.AccessDeniedPath = "/khongduoctruycap.html";
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ViewManageMenu", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole(RoleName.Administrator);
+    });
+    options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
+});
+
 
 var app = builder.Build();
 
