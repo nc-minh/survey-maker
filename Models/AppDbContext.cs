@@ -26,6 +26,7 @@ namespace SurveyMaker.Models
                     entityType.SetTableName(tableName.Substring(6));
                 }
             }
+
         }
 
         public DbSet<Contact> Contacts { get; set; }

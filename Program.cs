@@ -48,6 +48,15 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
 });
 
+// add session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    // for one day
+    options.IdleTimeout = TimeSpan.FromDays(1);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -67,7 +76,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

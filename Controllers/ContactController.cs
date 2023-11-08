@@ -40,6 +40,7 @@ namespace SurveyMaker.Controllers
                 return NotFound();
             }
 
+
             var contact = await _context.Contacts
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
@@ -58,6 +59,17 @@ namespace SurveyMaker.Controllers
         [AllowAnonymous]
         public IActionResult SentContact()
         {
+            // Store a value in the session
+            if (HttpContext.Session.GetString("Name") == null)
+            {
+
+                HttpContext.Session.SetString("Name", "GitHub Copilot" + DateTime.Now.ToString());
+            }
+
+            var name = HttpContext.Session.GetString("Name");
+
+            ViewData["Name"] = name;
+
             return View();
         }
 

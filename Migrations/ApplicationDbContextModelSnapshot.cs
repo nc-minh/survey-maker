@@ -178,7 +178,6 @@ namespace SurveyMaker.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("HomeAdress")
-                        .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar");
 
@@ -261,6 +260,50 @@ namespace SurveyMaker.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Contacts");
+                });
+
+            modelBuilder.Entity("SurveyMaker.Models.Form", b =>
+                {
+                    b.Property<int>("FormId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FormId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar");
+
+                    b.Property<bool>("IsLoginRequired")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SubmissionLimit")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("FormId");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("Title");
+
+                    b.ToTable("Form");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
