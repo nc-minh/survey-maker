@@ -189,7 +189,7 @@ namespace SurveyMaker.Migrations
 
                     b.HasIndex("ResponseId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("SurveyMaker.Models.AppUser", b =>
@@ -296,7 +296,7 @@ namespace SurveyMaker.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contacts");
+                    b.ToTable("Contacts", (string)null);
                 });
 
             modelBuilder.Entity("SurveyMaker.Models.FormModel", b =>
@@ -330,7 +330,7 @@ namespace SurveyMaker.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Forms");
+                    b.ToTable("Forms", (string)null);
                 });
 
             modelBuilder.Entity("SurveyMaker.Models.OptionModel", b =>
@@ -360,7 +360,7 @@ namespace SurveyMaker.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Options");
+                    b.ToTable("Options", (string)null);
                 });
 
             modelBuilder.Entity("SurveyMaker.Models.QuestionModel", b =>
@@ -396,7 +396,7 @@ namespace SurveyMaker.Migrations
 
                     b.HasIndex("FormId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("SurveyMaker.Models.ResponseModel", b =>
@@ -424,7 +424,7 @@ namespace SurveyMaker.Migrations
 
                     b.HasIndex("FormId");
 
-                    b.ToTable("Responses");
+                    b.ToTable("Responses", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
