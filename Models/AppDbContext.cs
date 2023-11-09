@@ -25,6 +25,11 @@ namespace SurveyMaker.Models
                 {
                     entityType.SetTableName(tableName.Substring(6));
                 }
+
+                builder.Entity<FormModel>()
+                    .HasMany(f => f.Questions)
+                    .WithOne(q => q.Form)
+                    .HasForeignKey(q => q.FormId);
             }
 
         }
@@ -32,6 +37,8 @@ namespace SurveyMaker.Models
         public DbSet<Contact> Contacts { get; set; }
 
         public DbSet<FormModel> Forms { get; set; }
+
+        public DbSet<QuestionModel> Questions { get; set; }
 
     }
 }

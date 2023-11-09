@@ -3,21 +3,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SurveyMaker.Models;
 
-public class FormModel
+public class QuestionModel
 {
     [Key]
     public int Id { get; set; }
 
     [Column(TypeName = "nvarchar")]
-    public string? Title { get; set; }
+    public string? QuestionTitle { get; set; }
 
     [Column(TypeName = "nvarchar")]
-    public string? Description { get; set; }
-    public bool? IsLoginRequired { get; set; }
-    public int SubmissionLimit { get; set; }
-    public string? CreatedBy { get; set; }
+    public string? QuestionType { get; set; }
+    public bool? IsRequired { get; set; }
+    public string? ImageUrl { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
-    public List<QuestionModel>? Questions { get; set; }
+    public int FormId { get; set; }
+    public FormModel? Form { get; set; }
 }
