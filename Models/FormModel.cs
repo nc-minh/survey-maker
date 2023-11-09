@@ -14,7 +14,8 @@ public class FormModel
     [Column(TypeName = "nvarchar")]
     public string? Description { get; set; }
     public bool? IsLoginRequired { get; set; }
-    public int SubmissionLimit { get; set; } = 0;
+    public int? SubmissionLimit { get; set; } = 0;
+    public bool? IsRelease { get; set; } = false;
     public string? CreatedBy { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
