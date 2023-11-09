@@ -14,4 +14,6 @@ public class ResponseModel
     public int FormId { get; set; }
     public string UserId { get; set; } = null!;
     public FormModel? Form { get; set; }
+
+    public ICollection<AnswerModel>? Answers { get; set; }
 }

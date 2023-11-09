@@ -22,4 +22,6 @@ public class QuestionModel
     public FormModel? Form { get; set; }
 
     public List<OptionModel>? Options { get; set; }
+
+    public ICollection<AnswerModel>? Answers { get; set; }
 }

@@ -40,6 +40,25 @@ namespace SurveyMaker.Models
                     .HasOne(r => r.Form)
                     .WithMany(f => f.Responses)
                     .HasForeignKey(r => r.FormId);
+
+                builder.Entity<AnswerModel>()
+                    .HasOne(a => a.Option)
+                    .WithMany(o => o.Answers)
+                    .HasForeignKey(a => a.OptionId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                builder.Entity<AnswerModel>()
+                    .HasOne(a => a.Question)
+                    .WithMany(q => q.Answers)
+                    .HasForeignKey(a => a.QuestionId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                builder.Entity<AnswerModel>()
+                    .HasOne(a => a.Response)
+                    .WithMany(r => r.Answers)
+                    .HasForeignKey(a => a.ResponseId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
             }
 
         }
@@ -53,6 +72,8 @@ namespace SurveyMaker.Models
         public DbSet<OptionModel> Options { get; set; }
 
         public DbSet<ResponseModel> Responses { get; set; }
+
+        public DbSet<AnswerModel> Answers { get; set; }
 
     }
 }

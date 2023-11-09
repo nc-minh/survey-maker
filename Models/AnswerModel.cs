@@ -3,19 +3,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SurveyMaker.Models;
 
-public class OptionModel
+public class AnswerModel
 {
     [Key]
     public int Id { get; set; }
 
-    [Column(TypeName = "nvarchar")]
-    public string? Content { get; set; }
-    public string? ImageUrl { get; set; }
+    public string? content { get; set; }
+
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
+    public int ResponseId { get; set; }
     public int QuestionId { get; set; }
-    public QuestionModel? Question { get; set; }
+    public int OptionId { get; set; }
 
-    public ICollection<AnswerModel>? Answers { get; set; }
+    public ResponseModel? Response { get; set; }
+    public QuestionModel? Question { get; set; }
+    public OptionModel? Option { get; set; }
 }
