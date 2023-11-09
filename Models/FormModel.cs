@@ -20,4 +20,5 @@ public class FormModel
     public DateTime? UpdatedAt { get; set; }
 
     public List<QuestionModel>? Questions { get; set; }
+    public List<ResponseModel>? Responses { get; set; }
 }
