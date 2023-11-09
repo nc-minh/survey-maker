@@ -30,6 +30,11 @@ namespace SurveyMaker.Models
                     .HasMany(f => f.Questions)
                     .WithOne(q => q.Form)
                     .HasForeignKey(q => q.FormId);
+
+                builder.Entity<QuestionModel>()
+                    .HasMany(q => q.Options)
+                    .WithOne(o => o.Question)
+                    .HasForeignKey(o => o.QuestionId);
             }
 
         }
@@ -39,6 +44,8 @@ namespace SurveyMaker.Models
         public DbSet<FormModel> Forms { get; set; }
 
         public DbSet<QuestionModel> Questions { get; set; }
+
+        public DbSet<OptionModel> Options { get; set; }
 
     }
 }
