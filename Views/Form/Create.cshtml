@@ -1,3 +1,345 @@
+@{
+    var data = ViewData["data"] as FormModel;
+
+    var title = data?.Title;
+    var description = data?.Description;
+    var formId = data?.Id;
+    var currentQuestionId = "";
+
+    var questions = data?.Questions as List<QuestionModel>;
+    questions = questions ?? new List<QuestionModel>();
+
+
+}
+<style>
+    .question-item {
+        width: 750px;
+        padding: 20px;
+        box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
+        border: 1px solid rgb(218, 220, 224);
+        border-radius: 8px;
+        margin-top: 12px;
+    }
+
+    .input-model {
+        outline: none;
+        border: none;
+        border-bottom: 1px dashed #ccc;
+        width: 100%;
+        margin-top: 12px;
+    }
+
+    .btn-action-wapper {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .question-wapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
 <div>
-    form
+    <form>
+        <div class="mb-3">
+            <label for="title" class="form-label">Tiêu đề</label>
+            <input type="text" class="form-control" id="title" value="@title">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Mô tả khảo sát</label>
+            <input type="text" class="form-control" id="description" value="@description">
+        </div>
+        <button class="btn btn-primary" onclick="saveForm()">Lưu khảo sát</button>
+        <button class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#questionModal"
+            onclick="createQuestion(@formId)">
+            Thêm câu hỏi
+        </button>
+    </form>
+
+
+    <div class="question-wapper">
+        @foreach (var question in questions)
+        {
+            <div class="question-item">
+                <div>
+                    @Html.DisplayFor(modelItem => question.QuestionTitle)
+                </div>
+
+                @if (question.QuestionType == "DOAN_VAN")
+                {
+                    <input disabled class="input-model" type="text" placeholder="Văn bản câu trả lời ngắn">
+                }
+
+                @if (question.QuestionType == "TRAC_NGHIEM")
+                {
+                    <ul>
+                        @foreach (var option in question?.Options)
+                        {
+                            <li>
+                                <div>
+                                    <p>@Html.DisplayFor(optionItem => option.Content)</p>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <div class="mt-5 btn-action-wapper">
+                    <button type="button" class="btn btn-danger" data-question-id="@question.Id"
+                        onclick="removeQuestionById(this)">
+                        Xóa
+                    </button>
+                    <a class="btn btn-primary" asp-controller="Question" asp-action="EditQuestion"
+                        asp-route-id="@question.Id">Xem</a>
+                </div>
+            </div>
+        }
+    </div>
+
+
 </div>
+
+<div class="modal fade" id="questionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Tạo câu hỏi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="question-title" placeholder="Tiêu đề câu hỏi">
+                </div>
+
+                <select class="form-select" id="mode" onchange="handleOnChangeSelect()">
+                    <option selected>Chọn loại câu hỏi</option>
+                    <option value="TRAC_NGHIEM">Trắc nghiệm</option>
+                    <option value="DOAN_VAN">Đoạn văn</option>
+                </select>
+
+                <div>
+                    <div id="render-more-option"></div>
+                    <button type="submit" class="btn btn-primary my-2" id="add-more-option">Thêm tùy chọn</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="updateQuestion(currentQuestionId)">Lưu câu
+                    hỏi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    const addMoreOptionBtn = document.querySelector('#add-more-option');
+    addMoreOptionBtn.addEventListener('click', () => {
+        const mode = document.querySelector('#mode').value;
+
+        if (mode == 'TRAC_NGHIEM') {
+            const node = document.createElement("input");
+            node.setAttribute("type", "text");
+            node.setAttribute("class", "form-control option");
+            node.setAttribute("placeholder", "Tùy chọn...");
+
+            const optionValue = document.querySelectorAll('.option');
+
+            for (let i = 0; i < optionValue.length; i++) {
+                if (optionValue[i].value == '') {
+                    alert('Vui lòng nhập tùy chọn');
+                    return;
+                }
+            }
+
+            const renderMoreOption = document.querySelector('#render-more-option');
+
+            renderMoreOption.appendChild(node);
+        }
+    })
+
+    function handleOnChangeSelect() {
+        const mode = document.querySelector('#mode').value;
+
+        if (mode == 'TRAC_NGHIEM') {
+            const renderMoreOption = document.querySelector('#render-more-option');
+            renderMoreOption.innerHTML = `<input type="text" class="form-control option my-2 option-id" placeholder="Tùy chọn...">`;
+
+            const addMoreOptionBtn = document.querySelector('#add-more-option');
+            addMoreOptionBtn.style.display = 'block';
+        }
+
+        if (mode == 'DOAN_VAN') {
+            const renderMoreOption = document.querySelector('#render-more-option');
+            renderMoreOption.innerHTML = `<div></div>`;
+
+            const addMoreOptionBtn = document.querySelector('#add-more-option');
+            addMoreOptionBtn.style.display = 'none';
+        }
+    }
+</script>
+
+<script>
+    var currentQuestionId = "";
+    function createQuestion(formId) {
+
+        $.ajax({
+            url: `/questions/create`,
+            type: 'POST',
+            data: {
+                formId: formId,
+            },
+            success: function (data) {
+                console.log(data);
+                currentQuestionId = data?.id;
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+    function createOption() {
+
+        let options = []
+
+        const optionValue = document.querySelectorAll('.option');
+
+        for (let i = 0; i < optionValue.length; i++) {
+            if (optionValue[i].value !== '') {
+                options.push(optionValue[i].value);
+            }
+        }
+
+        $.ajax({
+            url: `/options/create`,
+            type: 'POST',
+            data: {
+                questionId: currentQuestionId,
+                content: options,
+
+            },
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+    function updateQuestion(questionId) {
+        const mode = document.querySelector('#mode');
+
+        if (mode.value == 'TRAC_NGHIEM' || mode.value == 'DOAN_VAN') {
+            $.ajax({
+                url: `/questions/update`,
+                type: 'POST',
+                data: {
+                    questionId: questionId,
+                    questionType: mode.value,
+                    questionTitle: document.querySelector('#question-title').value,
+                },
+                success: function (data) {
+                    console.log(data);
+                    currentQuestionId = data?.id;
+                    location.reload();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+
+            createOption()
+
+            mode.classList.add('input-normal');
+        }
+
+        mode.classList.add('input-error');
+    }
+
+    function removeQuestionById(_this) {
+        const questionId = _this.getAttribute('data-question-id');
+
+        if (questionId) {
+            $.ajax({
+                url: `/questions/delete`,
+                type: 'POST',
+                data: {
+                    questionId: questionId,
+                },
+                success: function (data) {
+                    console.log(data);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+
+    function getQuestionById(_this) {
+        const questionId = _this.getAttribute('data-question-id');
+
+        if (questionId) {
+            $.ajax({
+                url: `/questions/${questionId}`,
+                type: 'GET',
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+
+    function saveForm() {
+        const title = document.querySelector('#title').value;
+        const description = document.querySelector('#description').value;
+
+        if (title) {
+            $.ajax({
+                url: `/forms/save`,
+                type: 'POST',
+                data: {
+                    title: title,
+                    description: description
+                },
+                success: function (data) {
+                    console.log(data);
+                    location.href = `/forms`;
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+</script>
+
+<style>
+    .question-form {
+        padding: 24px;
+        border: 1px #ccc solid;
+        margin: 12px 0;
+        border-radius: 24px;
+    }
+
+    .input-error {
+        border: 1px solid red !important;
+    }
+
+    .input-normal {
+        border: unset;
+    }
+</style>

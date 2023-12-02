@@ -8,6 +8,8 @@ public class ResponseModel
     [Key]
     public int Id { get; set; }
 
+    public bool IsComplete { get; set; } = false;
+
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
@@ -15,5 +17,5 @@ public class ResponseModel
     public string UserId { get; set; } = null!;
     public FormModel? Form { get; set; }
 
-    public ICollection<AnswerModel>? Answers { get; set; }
+    public List<AnswerModel>? Answers { get; set; }
 }

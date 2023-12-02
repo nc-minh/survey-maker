@@ -9,6 +9,7 @@ public class OptionModel
     public int Id { get; set; }
 
     [Column(TypeName = "nvarchar")]
+    [StringLength(500)]
     public string? Content { get; set; }
     public string? ImageUrl { get; set; }
     public DateTime? CreatedAt { get; set; }
@@ -17,5 +18,5 @@ public class OptionModel
     public int QuestionId { get; set; }
     public QuestionModel? Question { get; set; }
 
-    public ICollection<AnswerModel>? Answers { get; set; }
+    public List<AnswerModel>? Answers { get; set; }
 }

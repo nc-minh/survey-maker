@@ -9,9 +9,11 @@ public class FormModel
     public int Id { get; set; }
 
     [Column(TypeName = "nvarchar")]
+    [StringLength(500)]
     public string? Title { get; set; }
 
     [Column(TypeName = "nvarchar")]
+    [StringLength(500)]
     public string? Description { get; set; }
     public bool? IsLoginRequired { get; set; }
     public int? SubmissionLimit { get; set; } = 0;
@@ -23,3 +25,4 @@ public class FormModel
     public List<QuestionModel>? Questions { get; set; }
     public List<ResponseModel>? Responses { get; set; }
 }
+

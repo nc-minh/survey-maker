@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using App.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,9 @@ builder.Services.AddOptions();
 var mailSettings = builder.Configuration.GetSection("MailSettings");
 builder.Services.Configure<MailSettings>(mailSettings);
 builder.Services.AddSingleton<IEmailSender, SendMailService>();
+
+builder.Services.AddControllersWithViews()
+                .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
 builder.Services.ConfigureApplicationCookie(options =>

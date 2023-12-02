@@ -1,0 +1,242 @@
+@{
+    var question = ViewData["question"] as QuestionModel;
+}
+
+<style>
+    .option-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px;
+        gap: 10px;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .edit-question-action-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 5px;
+    }
+
+    .edit-question-add-new-option-wapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px;
+        gap: 10px;
+    }
+
+    .edit-question-add-new-input {
+        flex: 1;
+    }
+
+    .display-none {
+        display: none;
+    }
+</style>
+<h1>Liên hệ</h1>
+
+<div>
+    <input value="@question.QuestionTitle" type="text" id="question-title" class="form-control"
+        placeholder="Nhập nội dung câu hỏi">
+    @if (@question.QuestionType == "TRAC_NGHIEM")
+    {
+        <select class="form-select mt-2" id="mode" onchange="handleOnChangeSelect()">
+            <option>Chọn loại câu hỏi</option>
+            <option value="DOAN_VAN">Đoạn văn</option>
+            <option selected value="TRAC_NGHIEM">Trắc nghiệm</option>
+        </select>
+    }
+
+    @if (@question.QuestionType == "DOAN_VAN")
+    {
+        <select class="form-select" id="mode" onchange="handleOnChangeSelect()">
+            <option>Chọn loại câu hỏi</option>
+            <option selected value="DOAN_VAN">Đoạn văn</option>
+            <option value="TRAC_NGHIEM">Trắc nghiệm</option>
+        </select>
+    }
+
+    @if (@question.QuestionType != "DOAN_VAN" && @question.QuestionType != "TRAC_NGHIEM")
+    {
+        <select class="form-select" id="mode" onchange="handleOnChangeSelect()">
+            <option selected>Chọn loại câu hỏi</option>
+            <option value="DOAN_VAN">Đoạn văn</option>
+            <option value="TRAC_NGHIEM">Trắc nghiệm</option>
+        </select>
+    }
+
+    <ul id="multiple-choice">
+        @foreach (var option in question?.Options)
+        {
+            <li>
+                <div class="option-item">
+                    <input id="old-option-@option.Id" value="@Html.DisplayFor(optionItem => option.Content)" type="text"
+                        class="form-control">
+
+                    <div class="edit-question-action-wrapper">
+                        <button type="button" class="btn btn-danger" data-option-id="@option.Id"
+                            onclick="removeOptionById(this)">
+                            Xóa
+                        </button>
+                        <button type="button" class="btn btn-primary" data-option-id="@option.Id"
+                            onclick="updateOption(this)">
+                            Lưu
+                        </button>
+                    </div>
+                </div>
+            </li>
+        }
+
+        <li class="edit-question-add-new-option-wapper">
+            <input id="new-option" type="text" class="form-control edit-question-add-new-input"
+                placeholder="Thêm mới tùy chọn">
+            <button type="button" class="btn btn-primary" onclick="addNewOption()">
+                Thêm mới tùy chọn
+            </button>
+        </li>
+    </ul>
+
+
+
+    <button type="button" class="btn btn-primary" onclick="saveQuestion()">
+        Lưu lại chỉnh sửa
+    </button>
+</div>
+
+<script>
+    function removeOptionById(_this) {
+        const optionId = _this.getAttribute('data-option-id');
+
+        if (optionId) {
+            $.ajax({
+                url: `/options/delete`,
+                type: 'POST',
+                data: {
+                    optionId: optionId,
+                },
+                success: function (data) {
+                    console.log(data);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+
+    function addNewOption() {
+        const content = document.querySelector('#new-option').value;
+
+        const url = window.location.pathname;
+        const urlSegments = url.split('/');
+        const questionId = urlSegments[urlSegments.length - 1];
+
+        if (content) {
+            $.ajax({
+                url: `/options/create/one`,
+                type: 'POST',
+                data: {
+                    questionId: questionId,
+                    content: content,
+                },
+                success: function (data) {
+                    console.log(data);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+
+    function updateOption(_this) {
+        const optionId = _this.getAttribute('data-option-id');
+        const content = document.querySelector(`#old-option-${optionId}`).value;
+
+        if (content) {
+            $.ajax({
+                url: `/options/update`,
+                type: 'POST',
+                data: {
+                    id: optionId,
+                    content: content,
+
+                },
+                success: function (data) {
+                    console.log(data);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+
+    function saveQuestion() {
+        const questionTitle = document.querySelector('#question-title').value;
+        const mode = document.querySelector('#mode').value;
+
+        const url = window.location.pathname;
+        const urlSegments = url.split('/');
+        const questionId = urlSegments[urlSegments.length - 1];
+
+        if (questionTitle) {
+            $.ajax({
+                url: `/questions/update`,
+                type: 'POST',
+                data: {
+                    questionTitle: questionTitle,
+                    questionType: mode,
+                    questionId, questionId
+                },
+                success: function (data) {
+                    console.log(data);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+
+    function handleOnChangeSelect() {
+        const mode = document.querySelector('#mode').value;
+        const editQuestionAddNewOptionWapper = document.querySelector('#multiple-choice');
+
+
+        if (mode == 'TRAC_NGHIEM') {
+            editQuestionAddNewOptionWapper.classList.remove('display-none');
+        }
+
+        if (mode == 'DOAN_VAN') {
+            editQuestionAddNewOptionWapper.classList.add('display-none');
+        }
+    }
+
+    @* onload js *@
+    const mode = document.querySelector('#mode').value;
+
+    if (mode == 'TRAC_NGHIEM') {
+
+    }
+
+    if (mode == 'DOAN_VAN') {
+        const editQuestionAddNewOptionWapper = document.querySelector('#multiple-choice');
+        editQuestionAddNewOptionWapper.classList.add('display-none');
+    }
+
+
+</script>
