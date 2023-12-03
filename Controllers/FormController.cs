@@ -111,7 +111,6 @@ namespace SurveyMaker.Controllers
 
             var questions = _context.Questions.Where(q => q.FormId == formId).ToList();
 
-
             if (questions != null && questions.Count > 0)
             {
                 for (int i = 0; i < form?.Questions.Count; i++)
@@ -133,6 +132,34 @@ namespace SurveyMaker.Controllers
         [HttpGet("/forms/statistical/{formId}")]
         public IActionResult Statistical(int formId)
         {
+            var responses = _context.Responses.Where(r => r.FormId == formId).ToList();
+            var questions = _context.Questions.Where(q => q.FormId == formId).ToList();
+
+            _logger.LogInformation("responses: " + responses.Count);
+
+            if (questions != null && questions.Count > 0)
+            {
+                for (int i = 0; i < questions.Count; i++)
+                {
+                    if (questions[i].QuestionType == "TRAC_NGHIEM")
+                    {
+                        var options = _context.Options.Where(o => o.QuestionId == questions[i].Id).ToList();
+                        questions[i].Options = options;
+                    }
+
+                    var answers = _context.Answers.Where(o => o.QuestionId == questions[i].Id).ToList();
+
+                    if (answers != null && answers.Count > 0)
+                    {
+                        questions[i].Answers = answers;
+                    }
+
+                }
+            }
+
+            ViewData["responses"] = responses;
+            ViewData["questions"] = questions;
+
             return View();
         }
     }

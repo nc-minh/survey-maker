@@ -146,7 +146,5 @@ namespace SurveyMaker.Controllers
             ViewData["question"] = question;
             return View();
         }
-
-
     }
 }

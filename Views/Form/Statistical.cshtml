@@ -1,4 +1,74 @@
+@{
+    var responses = ViewData["responses"] as List<ResponseModel>;
+    responses = responses ?? new List<ResponseModel>();
+    var questions = ViewData["questions"] as List<QuestionModel>;
+    questions = questions ?? new List<QuestionModel>();
+
+
+
+}
+
 <div>
-    <h1>404</h1>
-    <p>Page not found</p>
+    <h1>Thống kê</h1>
+    <div>
+        <p>@responses.Count câu trả lời</p>
+    </div>
+
+    <div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Câu hỏi</th>
+                    <th>Trả lời</th>
+                    <th>Tỉ lệ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var question in questions)
+                {
+                    var answers = question?.Answers;
+                    answers = answers ?? new List<AnswerModel>();
+
+                    var options = question?.Options;
+                    options = options ?? new List<OptionModel>();
+                    <tr>
+                        <td>@question?.QuestionTitle</td>
+                        <td>
+
+                            @if (question.QuestionType == "TRAC_NGHIEM")
+                            {
+                                @foreach (var option in options)
+                                {
+                                    <p>@option.Content</p>
+                                }
+                            }
+                            else
+                            {
+                                @foreach (var answer in answers)
+                                {
+                                    <p>@answer.content</p>
+                                    var answerContent = answer.content;
+                                }
+                            }
+                        </td>
+                        <td>
+                            @if (question.QuestionType == "TRAC_NGHIEM")
+                            {
+                                @foreach (var option in options)
+                                {
+                                    if (options.Count > 0 && answers.Count > 0)
+                                    {
+                                        var count = (answers.Count(x => x.OptionId == option.Id));
+                                        var rate = (double)count / answers.Count * 100;
+                                        <p>@Math.Round(rate, 1) %</p>
+                                    }
+                                }
+                            }
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
