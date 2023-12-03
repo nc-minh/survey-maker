@@ -9,11 +9,31 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SurveyMaker.styles.css" asp-append-version="true" />
 
+    <style>
+        .footer {
+            position: fixed;
+            bottom: 0;
+            z-index: 10;
+            background-color: #fff;
+        }
 
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            background-color: #fff;
+        }
+
+        .body {
+            margin-top: 80px;
+        }
+    </style>
 </head>
 
 <body>
-    <header>
+    <header class="header">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SurveyMaker</a>
@@ -30,6 +50,11 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home"
                                 asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Contact"
+                                asp-action="SentContact">Liên
+                                hệ</a>
+                        </li>
                     </ul>
 
                     <partial name="_LoginPartial" />
@@ -38,7 +63,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container body">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

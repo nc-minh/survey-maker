@@ -1,15 +1,142 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
     var forms = ViewData["forms"] as List<FormModel>;
+    forms = forms ?? new List<FormModel>();
+    var responses = ViewData["responses"] as List<ResponseModel>;
+    responses = responses ?? new List<ResponseModel>();
 }
+
+<style>
+    .home-index-form-item {
+        border: 1px solid #dfe1e5;
+        border-radius: 3px;
+        width: 210px;
+        height: 246px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: black;
+        position: relative;
+    }
+
+    .home-index-form-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .home-index-form-image-wrapper {
+        width: 100%;
+        height: 70%;
+    }
+
+    .home-index-form-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .home-index-form-title {
+        margin-top: 12px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+        width: 100%;
+        text-align: center;
+    }
+
+    .home-index-form-create-at {
+        font-size: 12px;
+    }
+
+    .home-index-form-add-image-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+        cursor: pointer;
+    }
+
+    .home-index-form-add-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .home-index-title {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .home-index-section {
+        margin-bottom: 40px;
+
+    }
+
+    .lable {
+        position: absolute;
+        bottom: -26px;
+        width: 100%;
+        background: yellow;
+        text-align: center;
+    }
+
+    .lable.completed {
+        background: green;
+        color: white;
+    }
+</style>
 
 <partial name="_AlertMessage" />
 
-<div>
-    @foreach (var f in forms)
-    {
-        <div>
-            <p>@f.Title</p>
-        </div>
-    }
+<div class="home-index-section">
+    <h1 class="home-index-title">Các khảo sát đã tạo</h1>
+    <div class="home-index-form-wrapper">
+        <a href="/forms/create" class="home-index-form-item">
+            <div class="home-index-form-add-image-wrapper">
+                <img class="home-index-form-add-image" src="/images/add.png" alt="">
+            </div>
+        </a>
+
+        @foreach (var f in forms)
+        {
+            <a href="/forms/mode/@f.Id" class="home-index-form-item">
+                <div class="home-index-form-image-wrapper">
+                    <img class="home-index-form-image" src="/images/survey.png" alt="">
+                </div>
+                <p class="home-index-form-title">@f.Title</p>
+                <p class="home-index-form-create-at">@f.CreatedAt</p>
+            </a>
+        }
+    </div>
+</div>
+
+<div class="home-index-section">
+    <h1 class="home-index-title">Các khảo sát đã thực hiện</h1>
+    <div class="home-index-form-wrapper">
+        @foreach (var r in responses)
+        {
+
+            <a href="/take/@r?.Form?.Id" class="home-index-form-item">
+                <div class="home-index-form-image-wrapper">
+                    <img class="home-index-form-image" src="/images/survey.png" alt="">
+                </div>
+                <p class="home-index-form-title">@r?.Form?.Title</p>
+                <p class="home-index-form-create-at">@r?.CreatedAt</p>
+
+                @if (r?.IsComplete == true)
+                {
+                    <p class="lable completed">Đã hoàn thành</p>
+                }
+                else
+                {
+                    <p class="lable">Chưa hoàn thành</p>
+                }
+            </a>
+        }
+    </div>
 </div>

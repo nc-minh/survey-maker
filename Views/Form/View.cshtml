@@ -1,0 +1,82 @@
+@{
+    var form = ViewData["form"] as FormModel;
+
+    var questions = form?.Questions ?? new List<QuestionModel>();
+}
+
+<style>
+    .view-form-wapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .view-form-title,
+    .view-form-question-item {
+        width: 750px;
+        padding: 20px;
+        box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
+        border: 1px solid rgb(218, 220, 224);
+        border-radius: 8px;
+        margin-top: 12px;
+    }
+
+    .view-form-title {
+        border-top: 10px solid rgb(103, 58, 183);
+        border-radius: 12px 12px 8px 8px;
+    }
+
+    .view-form-question-wapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .view-form-question-item {
+        border-left: 10px solid rgb(103, 58, 183);
+    }
+</style>
+
+<div class="view-form-wapper">
+    <div class="view-form-title">
+        <h1>@form?.Title</h1>
+        @if (form?.Description != null && form.Description != "")
+        {
+            <p>@form.Description</p>
+        }
+    </div>
+
+    <div class="view-form-question-wapper">
+        @foreach (var question in questions)
+        {
+            <div class="view-form-question-item">
+                <p>@question?.QuestionTitle</p>
+
+                @if (question?.QuestionType == "DOAN_VAN")
+                {
+                    <div class="form-group">
+                        <textarea disabled class="form-control content-textarea-value" class="form-control"
+                            data-content-value="@question.Id"></textarea>
+                    </div>
+                }
+
+                @if (question?.QuestionType == "TRAC_NGHIEM")
+                {
+                    var options = question?.Options ?? new List<OptionModel>();
+                    <ul>
+                        @foreach (var option in options)
+                        {
+                            <div class="form-check">
+                                <input disabled class="form-check-input" type="radio" name="radio-@question?.Id" id="@option.Id">
+                                <label class="form-check-label" for="@option.Id">
+                                    @option.Content
+                                </label>
+                            </div>
+
+                        }
+                    </ul>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,192 @@
+@{
+    var form = ViewData["form"] as FormModel;
+
+    var questions = form?.Questions as List<QuestionModel>;
+    questions = questions ?? new List<QuestionModel>();
+
+    var responses = form?.Responses as List<ResponseModel>;
+    responses = responses ?? new List<ResponseModel>();
+    var response = responses.Count > 0 ? responses[0] : null;
+}
+
+<style>
+    .take-response-question-item,
+    .take-response-question-item-title {
+        width: 750px;
+        padding: 20px;
+        box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
+        border: 1px solid rgb(218, 220, 224);
+        border-radius: 8px;
+        margin-top: 12px;
+    }
+
+    .take-response-question-item {
+        border-left: 10px solid rgb(103, 58, 183);
+    }
+
+    .take-response-question-wapper,
+    .take-response-wapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .take-response-question-item-title {
+        border-top: 10px solid rgb(103, 58, 183);
+        border-radius: 12px 12px 8px 8px;
+    }
+
+    .form-check {
+        width: fit-content;
+    }
+</style>
+
+<div>
+    <div class="take-response-wapper">
+        <div class="take-response-question-item-title">
+
+            <h1>@form?.Title</h1>
+            @if (form?.Description != null && form.Description != "")
+            {
+                <p>@form.Description</p>
+            }
+        </div>
+
+        <div class="take-response-question-wapper">
+            @foreach (var question in questions)
+            {
+                var answer = question?.Answers?.Count > 0 ? question.Answers[0] : null;
+
+                <div class="take-response-question-item">
+                    <p>@question?.QuestionTitle</p>
+
+                    @if (question?.QuestionType == "DOAN_VAN")
+                    {
+                        <div class="form-group">
+                            <textarea class="form-control content-textarea-value" class="form-control"
+                                data-content-value="@question.Id" data-response-id="@response?.Id">@answer?.content</textarea>
+                        </div>
+                    }
+
+                    @if (question?.QuestionType == "TRAC_NGHIEM")
+                    {
+                        <ul>
+                            @foreach (var option in question?.Options)
+                            {
+
+                                var checkedValue = answer != null && answer.OptionId == option.Id ? "checked" : "";
+
+                                <div class="form-check">
+                                    <input onclick="upsertAnswer(@question.Id, @response.Id, @option.Id)" class="form-check-input"
+                                        type="radio" name="radio-@question.Id" id="@option.Id" @checkedValue>
+                                    <label class="form-check-label" for="@option.Id"
+                                        onclick="upsertAnswer(@question.Id, @response.Id, @option.Id)">
+                                        @option.Content
+                                    </label>
+                                </div>
+
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+        </div>
+
+        <div>
+            <button type="button" class="btn btn-primary mt-5" data-btn-response-id="@response?.Id"
+                onclick="submitSurvey(this)">Gửi khảo
+                sát</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function upsertAnswer(questionId, responseId, optionId) {
+        console.log(`questionId: ${questionId}, responseId: ${responseId}, optionId: ${optionId}`);
+        if (questionId && responseId && optionId) {
+            $.ajax({
+                url: `/answers/upsert`,
+                type: 'POST',
+                data: {
+                    optionId: optionId,
+                    questionId, questionId,
+                    responseId: responseId,
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+
+    function debounce(func, timeout = 500) {
+        let timer = null;
+        return function (...args) {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+
+            timer = setTimeout(() => {
+                func.apply(this, args);
+            }, timeout);
+        }
+    }
+
+    function upsertAnswerDebounce(event) {
+        console.log("result", event?.target?.value, event?.target.getAttribute("data-content-value"));
+        const content = event?.target?.value;
+        const questionId = event?.target?.getAttribute("data-content-value");
+        const responseId = event?.target?.getAttribute("data-response-id");
+
+        if (questionId && responseId) {
+            $.ajax({
+                url: `/answers/upsert`,
+                type: 'POST',
+                data: {
+                    questionId, questionId,
+                    responseId: responseId,
+                    content: content
+                },
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+
+    const contentValueList = document.querySelectorAll(".content-textarea-value");
+    contentValueList.forEach(contentValue => {
+        contentValue.addEventListener("input", debounce(upsertAnswerDebounce));
+    });
+
+    function submitSurvey(_this) {
+        const responseId = _this.getAttribute("data-btn-response-id");
+
+        if (responseId) {
+            $.ajax({
+                url: `/responses/submit`,
+                type: 'POST',
+                data: {
+                    responseId: responseId,
+                },
+                success: function (data) {
+                    console.log(data);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+</script>

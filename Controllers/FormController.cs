@@ -1,14 +1,8 @@
-using System.Data.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using SurveyMaker.Models;
 using Microsoft.EntityFrameworkCore;
+using SurveyMaker.Models;
 
 namespace SurveyMaker.Controllers
 {
@@ -88,6 +82,58 @@ namespace SurveyMaker.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(oldForm);
+        }
+
+        [Authorize]
+        [HttpGet("/forms/mode/{formId}")]
+        public IActionResult Mode(int formId)
+        {
+            ViewData["formId"] = formId;
+            return View();
+        }
+
+        [Authorize]
+        [HttpGet("/forms/view/{formId}")]
+        public async Task<IActionResult> View(int formId)
+        {
+            if (_context.Forms == null)
+            {
+                return NotFound();
+            }
+
+            var userId = _userManager.GetUserId(User);
+            var form = await _context.Forms.FirstOrDefaultAsync(f => f.Id == formId && f.CreatedBy == userId);
+
+            if (form == null)
+            {
+                return NotFound();
+            }
+
+            var questions = _context.Questions.Where(q => q.FormId == formId).ToList();
+
+
+            if (questions != null && questions.Count > 0)
+            {
+                for (int i = 0; i < form?.Questions.Count; i++)
+                {
+                    if (form?.Questions[i].QuestionType == "TRAC_NGHIEM")
+                    {
+                        var options = _context.Options.Where(o => o.QuestionId == form.Questions[i].Id).ToList();
+                        form.Questions[i].Options = options;
+                    }
+                }
+            }
+
+            form.Questions = questions;
+            ViewData["form"] = form;
+            return View();
+        }
+
+        [Authorize]
+        [HttpGet("/forms/statistical/{formId}")]
+        public IActionResult Statistical(int formId)
+        {
+            return View();
         }
     }
 }

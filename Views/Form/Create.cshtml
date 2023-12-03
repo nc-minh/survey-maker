@@ -43,7 +43,7 @@
     }
 </style>
 <div>
-    <form>
+    <form id="form">
         <div class="mb-3">
             <label for="title" class="form-label">Tiêu đề</label>
             <input type="text" class="form-control" id="title" value="@title">
@@ -52,8 +52,8 @@
             <label for="description" class="form-label">Mô tả khảo sát</label>
             <input type="text" class="form-control" id="description" value="@description">
         </div>
-        <button class="btn btn-primary" onclick="saveForm()">Lưu khảo sát</button>
-        <button class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#questionModal"
+        <button type="submit" class="btn btn-primary" onclick="saveForm()">Lưu khảo sát</button>
+        <button type="button" class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#questionModal"
             onclick="createQuestion(@formId)">
             Thêm câu hỏi
         </button>
@@ -93,7 +93,7 @@
                         Xóa
                     </button>
                     <a class="btn btn-primary" asp-controller="Question" asp-action="EditQuestion"
-                        asp-route-id="@question.Id">Xem</a>
+                        asp-route-id="@question.Id">Sửa</a>
                 </div>
             </div>
         }
@@ -122,7 +122,7 @@
 
                 <div>
                     <div id="render-more-option"></div>
-                    <button type="submit" class="btn btn-primary my-2" id="add-more-option">Thêm tùy chọn</button>
+                    <button type="submit" class="btn btn-primary my-2" onclick="addMoreOption()">Thêm tùy chọn</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -137,10 +137,12 @@
 
 
 <script>
-    const addMoreOptionBtn = document.querySelector('#add-more-option');
-    addMoreOptionBtn.addEventListener('click', () => {
-        const mode = document.querySelector('#mode').value;
+    $("#form").submit(function (e) {
+        e.preventDefault();
+    });
 
+    function addMoreOption() {
+        const mode = document.querySelector('#mode').value;
         if (mode == 'TRAC_NGHIEM') {
             const node = document.createElement("input");
             node.setAttribute("type", "text");
@@ -160,7 +162,7 @@
 
             renderMoreOption.appendChild(node);
         }
-    })
+    }
 
     function handleOnChangeSelect() {
         const mode = document.querySelector('#mode').value;
@@ -316,7 +318,7 @@
                 },
                 success: function (data) {
                     console.log(data);
-                    location.href = `/forms`;
+                    location.href = `/`;
                 },
                 error: function (error) {
                     console.log(`error: ${error}`);

@@ -15,7 +15,7 @@ public class AnswerModel
 
     public int ResponseId { get; set; }
     public int QuestionId { get; set; }
-    public int OptionId { get; set; }
+    public int? OptionId { get; set; }
 
     public ResponseModel? Response { get; set; }
     public QuestionModel? Question { get; set; }
