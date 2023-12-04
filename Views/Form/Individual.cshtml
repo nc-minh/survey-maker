@@ -1,0 +1,28 @@
+@{
+    var responses = ViewData["responses"] as List<ResponseModel>;
+    responses = responses ?? new List<ResponseModel>();
+}
+
+
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Người làm khảo sát</th>
+                <th>Xem chi tiết</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var res in responses)
+            {
+
+                <tr>
+                    <td>@res.User.Email</td>
+                    <td>
+                        <button type="button" class="btn btn-success">Xem chi tiết</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

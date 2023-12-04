@@ -162,5 +162,63 @@ namespace SurveyMaker.Controllers
 
             return View();
         }
+
+        [Authorize]
+        [HttpPost("/forms/delete")]
+        public async Task<IActionResult> DeleteForm(int formId)
+        {
+            // var userId = _userManager.GetUserId(User);
+
+            var oldForm = await _context.Forms.FindAsync(formId);
+
+            // if(userId != oldForm.CreatedBy)
+            // {
+            //     return NotFound();
+            // }
+
+            if (oldForm != null)
+            {
+                _context.Forms.Remove(oldForm);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("/forms/individual/{formId}")]
+        public async Task<IActionResult> Individual(int formId)
+        {
+
+            var responses = _context.Responses
+           .Where(q => q.FormId == formId)
+           .Include(r => r.Form)
+           .ToList();
+
+
+            if (responses.Count > 0 && responses != null)
+            {
+                for (int i = 0; i < responses.Count; i++)
+                {
+                    var answers = _context.Answers.Where(a => a.ResponseId == responses[i].Id).ToList();
+
+                    if (answers != null && answers.Count > 0)
+                    {
+                        foreach (var answer in answers)
+                        {
+                            var question = _context.Questions.FirstOrDefault(q => q.Id == answer.QuestionId);
+                            answer.Question = question;
+                        }
+
+                        responses[i].Answers = answers;
+                    }
+
+                    responses[i].User = await _userManager.FindByIdAsync(responses[i].UserId);
+                }
+            }
+
+            ViewData["responses"] = responses;
+            return View();
+        }
     }
 }

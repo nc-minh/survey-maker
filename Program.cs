@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using App.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using SurveyMaker.Data;
 using SurveyMaker.Models;
 
@@ -71,6 +72,15 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// create IWebHostingEnvironment in context 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = "/StaticFiles"
+});
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

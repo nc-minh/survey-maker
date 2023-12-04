@@ -89,9 +89,29 @@
         background: green;
         color: white;
     }
+
+    .home-index-search-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .home-index-search-input {
+        flex: 1;
+    }
 </style>
 
 <partial name="_AlertMessage" />
+
+
+@* <form asp-action="Search" method="get">
+<div class="home-index-search-wrapper mb-2">
+<input type="text" class="form-control home-index-search-input" id="title"
+placeholder="Tìm kiếm theo tên khảo sát..." name="searchString">
+<button type="submit" class="btn btn-primary">Tìm kiếm</button>
+</div>
+</form> *@
 
 <div class="home-index-section">
     <h1 class="home-index-title">Các khảo sát đã tạo</h1>
@@ -101,6 +121,11 @@
                 <img class="home-index-form-add-image" src="/images/add.png" alt="">
             </div>
         </a>
+
+        @if (forms.Count == 0)
+        {
+            <p>Không có khảo sát nào</p>
+        }
 
         @foreach (var f in forms)
         {

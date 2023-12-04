@@ -24,8 +24,16 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         var userId = _userManager.GetUserId(User);
-        var forms = _context.Forms.Where(f => f.CreatedBy == userId).Where(f => f.IsRelease == true).ToList();
-        var responses = _context.Responses.Where(f => f.UserId == userId).Include(r => r.Form).ToList();
+        var forms = _context.Forms
+            .Where(f => f.CreatedBy == userId && f.IsRelease == true)
+            // .OrderByDescending(f => f.CreatedAt)
+            .ToList();
+
+        var responses = _context.Responses
+            .Where(f => f.UserId == userId)
+            .Include(r => r.Form)
+            // .OrderByDescending(r => r.CreatedAt)
+            .ToList();
 
         if (forms.Count > 0)
         {
@@ -34,6 +42,7 @@ public class HomeController : Controller
 
         if (responses.Count > 0)
         {
+
             ViewData["responses"] = responses;
         }
 
@@ -49,5 +58,35 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    public async Task<IActionResult> Search(string searchString)
+    {
+        var userId = _userManager.GetUserId(User);
+
+        if (!String.IsNullOrEmpty(searchString))
+        {
+            var forms = await _context.Forms
+                .Where(f => f.Title.Contains(searchString) && f.IsRelease == true && f.CreatedBy == userId)
+                .ToListAsync();
+
+            if (forms.Count > 0)
+            {
+                ViewData["forms"] = forms;
+            }
+        }
+
+        var responses = _context.Responses
+            .Where(f => f.UserId == userId)
+            .Include(r => r.Form)
+            // .OrderByDescending(r => r.CreatedAt)
+            .ToList();
+
+        if (responses.Count > 0)
+        {
+            ViewData["responses"] = responses;
+        }
+
+        return View("Index");
     }
 }

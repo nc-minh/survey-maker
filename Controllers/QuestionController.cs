@@ -65,7 +65,8 @@ namespace SurveyMaker.Controllers
 
         [Authorize]
         [HttpPost("/questions/update")]
-        public async Task<IActionResult> Update(int questionId, string questionType, string questionTitle)
+        public async Task<IActionResult> Update(int questionId, string questionType, string questionTitle, IFormFile imageFile)
+
         {
 
             _logger.LogInformation("Update question {questionId}", questionId);
@@ -76,6 +77,21 @@ namespace SurveyMaker.Controllers
             {
                 return NotFound();
             }
+
+            // update image
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "StaticFiles", imageFile.FileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+
+                oldQuestion.ImageUrl = "/StaticFiles/" + imageFile.FileName;
+            }
+
+
 
             oldQuestion.UpdatedAt = DateTime.Now;
             oldQuestion.QuestionType = questionType;
