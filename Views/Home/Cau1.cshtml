@@ -1,0 +1,147 @@
+﻿@{
+    var forms = ViewData["forms"] as List<FormModel>;
+    forms = forms ?? new List<FormModel>();
+    var responses = ViewData["responses"] as List<ResponseModel>;
+    responses = responses ?? new List<ResponseModel>();
+}
+
+<style>
+    .home-index-form-item {
+        border: 1px solid #dfe1e5;
+        border-radius: 3px;
+        width: 210px;
+        height: 350px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        color: black;
+        position: relative;
+    }
+
+    .home-index-form-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .home-index-form-image-wrapper {
+        width: 100%;
+        height: 70%;
+    }
+
+    .home-index-form-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .home-index-form-title {
+        margin-top: 12px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+        width: 100%;
+        text-align: center;
+    }
+
+    .home-index-form-create-at {
+        font-size: 12px;
+    }
+
+    .home-index-form-add-image-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+        cursor: pointer;
+    }
+
+    .home-index-form-add-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .home-index-title {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .home-index-section {
+        margin-bottom: 40px;
+
+    }
+
+    .lable {
+        position: absolute;
+        bottom: -26px;
+        width: 100%;
+        background: yellow;
+        text-align: center;
+    }
+
+    .lable.completed {
+        background: green;
+        color: white;
+    }
+
+    .home-index-search-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .home-index-search-input {
+        flex: 1;
+    }
+</style>
+
+<partial name="_AlertMessage" />
+
+
+<form asp-action="SearchCau1" method="get">
+    <div class="home-index-search-wrapper mb-2">
+        <input type="text" class="form-control home-index-search-input" id="title"
+            placeholder="Tìm kiếm theo mô tả của response..." name="searchString">
+        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    </div>
+</form>
+
+
+<div class="home-index-section">
+    <h1 class="home-index-title">Tìm kiếm Response theo Mô tả của Form</h1>
+
+    <div class="home-index-form-wrapper">
+        @foreach (var f in forms)
+        {
+
+            @foreach (var r in f.Responses)
+            {
+
+                <a class="home-index-form-item">
+                    <div class="home-index-form-image-wrapper">
+                        <img class="home-index-form-image" src="/images/survey.png" alt="">
+                    </div>
+                    <p class="home-index-form-title">@f.Title</p>
+                    <p class="home-index-form-create-at">@f.CreatedAt</p>
+                    <p>@r.User.Email</p>
+                    @if (r?.IsComplete == true)
+                    {
+                        <p class="lable completed">Đã hoàn thành</p>
+                    }
+                    else
+                    {
+                        <p class="lable">Chưa hoàn thành</p>
+                    }
+                </a>
+            }
+
+
+        }
+    </div>
+</div>

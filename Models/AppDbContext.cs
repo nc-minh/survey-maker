@@ -59,6 +59,12 @@ namespace SurveyMaker.Models
                     .HasForeignKey(a => a.ResponseId)
                     .OnDelete(DeleteBehavior.NoAction);
 
+                builder.Entity<tblDisableModel>()
+                .HasOne(a => a.Response)
+                .WithMany(o => o.disableModels)
+                .HasForeignKey(a => a.ResponseId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             }
 
         }
@@ -74,6 +80,7 @@ namespace SurveyMaker.Models
         public DbSet<ResponseModel> Responses { get; set; }
 
         public DbSet<AnswerModel> Answers { get; set; }
+        public DbSet<tblDisableModel> tblDisableModels { get; set; }
 
     }
 }

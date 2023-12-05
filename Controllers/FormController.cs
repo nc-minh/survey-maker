@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SurveyMaker.Data;
 using SurveyMaker.Models;
 
 namespace SurveyMaker.Controllers
@@ -87,6 +88,14 @@ namespace SurveyMaker.Controllers
         [Authorize]
         [HttpGet("/forms/mode/{formId}")]
         public IActionResult Mode(int formId)
+        {
+            ViewData["formId"] = formId;
+            return View();
+        }
+
+        [Authorize(Roles = RoleName.Administrator)]
+        [HttpGet("/forms/mode-admin/{formId}")]
+        public IActionResult ModeAdmin(int formId)
         {
             ViewData["formId"] = formId;
             return View();

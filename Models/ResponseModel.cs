@@ -18,5 +18,6 @@ public class ResponseModel
     public FormModel? Form { get; set; }
 
     public List<AnswerModel>? Answers { get; set; }
+    public List<tblDisableModel>? disableModels { get; set; }
     public AppUser? User { get; set; }
 }

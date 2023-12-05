@@ -1,0 +1,90 @@
+@{
+    var formId = ViewData["formId"];
+}
+
+<style>
+    .form-mode-copy-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .form-mode-copy-image {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+    }
+
+    .form-mode-action-wapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+ADMIN
+<div class="form-mode-action-wapper">
+    <a href="/forms/view/@formId"><button type="button" class="btn btn-success">Xem lại khảo sát</button></a>
+    <a href="/forms/statistical/@formId"><button type="button" class="btn btn-info">Xem thống kê</button></a>
+    @* <button type="button" class="btn btn-danger" onclick="removeFormById()">Xóa</button> *@
+    @* <button type="button" class="btn btn-warning" onclick="takeMyForm()">Thử làm khảo sát</button> *@
+    @* <button type="button" class="btn btn-info" onclick="getDetail()">Chi tiết người làm khảo sát</button> *@
+    @* <button type="button" class="btn btn-info form-mode-copy-wrapper" onclick="shareMySurvey()">
+    <img class="form-mode-copy-image" src="/images/link.png" alt="">
+    <p>Chia sẻ khảo sát</p>
+    </button> *@
+</div>
+
+<script>
+    function removeFormById() {
+        const url = window.location.pathname;
+        const urlSegments = url.split('/');
+        const formId = urlSegments[urlSegments.length - 1];
+
+        if (formId) {
+            $.ajax({
+                url: `/forms/delete`,
+                type: 'POST',
+                data: {
+                    formId: formId,
+                },
+                success: function (data) {
+                    console.log(data);
+                    alert('Xóa thành công');
+                    location.href = '/';
+                },
+                error: function (error) {
+                    console.log(`error: ${error}`);
+                }
+            });
+
+        }
+    }
+
+    function takeMyForm() {
+        const url = window.location.pathname;
+        const urlSegments = url.split('/');
+        const formId = urlSegments[urlSegments.length - 1];
+
+        location.href = `/take/${formId}`
+    }
+
+    function getDetail() {
+        const url = window.location.pathname;
+        const urlSegments = url.split('/');
+        const formId = urlSegments[urlSegments.length - 1];
+
+        location.href = `/forms/individual/${formId}`
+    }
+
+    async function shareMySurvey() {
+        const url = window.location.pathname;
+        const urlSegments = url.split('/');
+        const formId = urlSegments[urlSegments.length - 1];
+
+        const link = `localhost:5069/take/${formId}`;
+        await navigator.clipboard.writeText(link);
+
+        alert('Đã copy link khảo sát', link);
+    }
+</script>

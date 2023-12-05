@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SurveyMaker.Data;
 using SurveyMaker.Models;
 
 namespace SurveyMaker.Controllers;
@@ -88,5 +89,80 @@ public class HomeController : Controller
         }
 
         return View("Index");
+    }
+
+    [Authorize]
+    public IActionResult Cau1()
+    {
+        return View();
+    }
+
+    public async Task<IActionResult> SearchCau1(string searchString)
+    {
+        var userId = _userManager.GetUserId(User);
+
+        if (!String.IsNullOrEmpty(searchString))
+        {
+
+            var forms = await _context.Forms
+                .Where(f => f.Description.Contains(searchString) && f.IsRelease == true)
+                .ToListAsync();
+
+            _logger.LogInformation("FORM COUNT: " + forms.Count());
+
+            for (int i = 0; i < forms.Count(); i++)
+            {
+
+                var responses = _context.Responses
+                    .Where(f => forms[i].Id == f.FormId)
+                    .Include(r => r.Form)
+                    .ToList();
+
+                _logger.LogInformation("RESPONSE COUNT: " + responses.Count());
+
+                for (int j = 0; j < responses.Count(); j++)
+                {
+                    responses[j].User = await _userManager.FindByIdAsync(responses[j].UserId);
+                    responses[j].Form = await _context.Forms.FirstOrDefaultAsync(f => f.Id == responses[j].FormId);
+                }
+
+                forms[i].Responses = responses;
+            }
+
+            if (forms.Count > 0)
+            {
+                ViewData["forms"] = forms;
+            }
+        }
+
+
+
+        return View("Cau1");
+    }
+
+    [Authorize(Roles = RoleName.Administrator)]
+    public async Task<IActionResult> IndexAdmin()
+    {
+        var userId = _userManager.GetUserId(User);
+        var forms = await _context.Forms.ToListAsync();
+
+        var responses = _context.Responses
+            .Where(f => f.UserId == userId)
+            .Include(r => r.Form)
+            // .OrderByDescending(r => r.CreatedAt)
+            .ToList();
+
+        if (forms.Count > 0)
+        {
+            ViewData["forms"] = forms;
+        }
+
+        if (responses.Count > 0)
+        {
+
+            ViewData["responses"] = responses;
+        }
+
+        return View();
     }
 }
