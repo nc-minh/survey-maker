@@ -106,15 +106,21 @@
 
 <form asp-action="SearchCau1" method="get">
     <div class="home-index-search-wrapper mb-2">
+        <p>Tìm kiếm</p>
         <input type="text" class="form-control home-index-search-input" id="title"
             placeholder="Tìm kiếm theo mô tả của response..." name="searchString">
-        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        <button type="submit" class="btn btn-primary">Tìm</button>
     </div>
 </form>
 
 
 <div class="home-index-section">
-    <h1 class="home-index-title">Tìm kiếm Response theo Mô tả của Form</h1>
+    <h1 class="home-index-title">Tìm kiếm bài làm theo Mô tả của khảo sát</h1>
+
+    @if (forms.Count() <= 0)
+    {
+        <p>Không có khảo sát nào!</p>
+    }
 
     <div class="home-index-form-wrapper">
         @foreach (var f in forms)
